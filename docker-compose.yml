@@ -1,20 +1,24 @@
 version: '3'
 services:
   app:
-    container_name: docker-node-mongo
+    container_name: backend-pepsico
     restart: always
     build: .
     ports:
-      - '3333:3333'
+      - 3333:3333
+      - 9229:9229 #debug port
     external_links:
       - mongo
       - postgres
-    volumes: ['./:/usr/src/app']
+      - redis
+    volumes:
+      - ./:/home/node/api
+      - ./node_modules:/home/node/api/node_modules
     networks:
       - app-connect
 
   postgres:
-    container_name: postgres
+    container_name: postgres-pepsico
     image: postgres:11
     restart: unless-stopped
     ports:
@@ -29,7 +33,7 @@ services:
       - app-connect
 
   mongo:
-    container_name: mongo
+    container_name: mongo-pepsico
     restart: unless-stopped
     image: mongo
     volumes:
@@ -40,6 +44,7 @@ services:
       - app-connect
 
   redis:
+    container_name: redis-pepsico
     image: 'redis:alpine'
     hostname: redis
     networks:
